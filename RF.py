@@ -20,16 +20,21 @@ class RF:
 	tr_data = None
 	model = None
 	predict = None
+	header_list = None
 
 
 	"""
 		Initialize
 		- input_file:csvファイルパス（先頭列はラベル）
 	"""
-	def __init__(self, input_file):
+	def __init__(self, input_file, header_file=""):
 		if os.path.exists(input_file):
 			csv_data = csv.reader(open(input_file, "r"))
 			self.input_list = np.array([v for v in csv_data])
+
+		if os.path.exists(header_file):
+			header_csv_data = csv.reader(open(header_file, "r"))
+			self.header_list = np.array([v for v in header_csv_data])
 
 
 	"""
@@ -95,14 +100,37 @@ class RF:
 		return self.predict
 
 
+
+
 	"""
-		特徴量の重要度(Importance)取得
+		特徴量の重要度(Importance)をdictで取得
+
 	"""
 	def getImportance(self):
-		if (not self.model is None):
-			return self.model.feature_importances_
+		if ((self.model is not None) and (self.header_list is not None)):
+			dic = {}
+			for (label, value) in zip(self.header_list[0], self.model.feature_importances_):
+				dic[label] = value
+			return dic
 		else:
 			return False
+
+
+	"""
+		特徴量の重要度(Importance)をcsv出力
+
+	"""
+	def importanceToCsv(self, csvname):
+		if ((self.model is not None) and (self.header_list is not None)):
+			csvfile = open(csvname, 'w', encoding="shift_jis")
+			writer = csv.writer(csvfile)
+			for (label, value) in zip(self.header_list[0], self.model.feature_importances_):
+				writer.writerow([label, value])
+			return True
+
+		else:
+			return False
+
 
 
 	"""
@@ -117,5 +145,3 @@ class RF:
 	"""
 	def getTestData(self):
 		return self.test_data
-
-
