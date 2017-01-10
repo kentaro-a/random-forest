@@ -120,9 +120,9 @@ class RF:
 		特徴量の重要度(Importance)をcsv出力
 
 	"""
-	def importanceToCsv(self, csvname):
+	def importanceToCsv(self, csvname, encoding="shift_jis"):
 		if ((self.model is not None) and (self.header_list is not None)):
-			csvfile = open(csvname, 'w', encoding="shift_jis")
+			csvfile = open(csvname, 'w', encoding=encoding)
 			writer = csv.writer(csvfile)
 			for (label, value) in zip(self.header_list[0], self.model.feature_importances_):
 				writer.writerow([label, value])
