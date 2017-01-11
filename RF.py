@@ -103,15 +103,22 @@ class RF:
 
 
 	"""
-		特徴量の重要度(Importance)をdictで取得
+		特徴量の重要度(Importance)をtupleで取得
 
 	"""
-	def getImportance(self):
+	def getImportance(self, sort=""):
 		if ((self.model is not None) and (self.header_list is not None)):
-			dic = {}
+			lst = []
 			for (label, value) in zip(self.header_list[0], self.model.feature_importances_):
-				dic[label] = value
-			return dic
+				lst.append((label, value))
+
+			# asc/descが指定されている場合、ソートする
+			if (sort == "desc") :
+				lst = sorted(lst, key=lambda x:x[1], reverse=True)
+			elif (sort == "asc"):
+				lst = sorted(lst, key=lambda x:x[1], reverse=True)
+
+			return lst
 		else:
 			return False
 
